@@ -1,0 +1,30 @@
+<html>
+    <head>
+        <title>Creative Coding Fall 2020 - Project1</title>
+
+    <script src="js/d3.js"></script>
+
+<script type="text/javascript">
+    var numCircles = 0; // will be set by slider value 1-20
+    var offset = 30; // set this if you want there to be no circle at 0 degrees. Ideally this will be a variable dependent on numCircles
+    var circRadius = 300;
+
+    //Make an SVG Container
+     var svgContainer = d3.select("body").append("svg")
+                                         .attr("width", 600)
+                                         .attr("height", 600);
+
+     //Draw the Circle
+     var circle = svgContainer.append("circle")
+                              .attr("cx", 60)
+                              .attr("cy", 60)
+                              .attr("r", 20);
+
+    </script>
+    </head>
+    <body>
+      <h1>My animated loop</h1>
+      <svg width="600" height="600">
+        <circle ctx="60" cy="60" r="20"></circle>
+    </body>
+</html>

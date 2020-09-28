@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<!--
+HELPFUL SOURCES FOR THIS PROJECT
+https://github.com/d3/d3-transition
+https://css-tricks.com/almanac/properties/s/stroke/
+https://www.dashingd3js.com/svg-basic-shapes-and-d3js
+https://bl.ocks.org/1wheel/14c2176460be8ee7d389
+
+Breakthrough help with multiple expanding nodes was found here
+https://gist.github.com/whityiu/fb9f138a4a91032fa9ec
+
+http://duspviz.mit.edu/d3-workshop/transitions-animation/
+http://bl.ocks.org/bycoffe/3404776
+http://jsfiddle.net/VZ8R4/3/
+
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Creative Coding - Project 4 Looping Animation</title>
+    <style>
+        .content-area {
+            border: 0px solid #aa88aa;
+        }
+
+    </style>
+</head>
+<body>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script>
+
+        var rMultiplyer = 2;
+        var canvasSize = 250;
+        var beginRadius = 20;
+        var endRadius = 700;
+        var radius = 2;
+        var nodeRadius = 200;
+        var numNodes = 6;
+
+        var width = 1024,
+            height = 768,
+      			outlineColor = "black",
+      			pulseLineColor = "#000",
+      			bgColor = "#fff",
+      			pulseAnimationIntervalId;
+
+/*
+        var nodesArray = function (numNodes, nodeRadius) {
+          var nodes = [],
+              width = (nodeRadius * rMultiplyer) + canvasSize,
+              height = (nodeRadius * rMultiplyer) + canvasSize,
+              angle,
+              x,
+              y,
+              i;
+          for (i=0; i<numNodes; i++) {
+           angle = (i / (numNodes/2)) * Math.PI; // Calculate the angle at which the element will be placed.
+                                                 // For a semicircle, we would use (i / numNodes) * Math.PI.
+           x = (nodeRadius * Math.cos(angle)) + (width/2); // Calculate the x position of the element.
+           y = (nodeRadius * Math.sin(angle)) + (width/2); // Calculate the y position of the element.
+           // nodes.push({'id': i, 'x': x, 'y': y});
+           nodes.push({'x':x, "y":y});
+           console.log(nodes);
+          }
+          return nodes;
+
+        }
+*/
+		var nodesArray = [
+			{ "x": 200, "y": 100 },
+			{ "x": 400, "y": 100 },
+			{ "x": 100, "y": 300 },
+			{ "x": 500, "y": 300 },
+			{ "x": 200, "y": 500 },
+      { "x": 400, "y": 500 }
+		];
+
+        // Set up the SVG display area
+        var svg = d3.select("body").append("svg")
+            .attr("width", width)
+            .attr("height", height)
+			      .attr("fill", bgColor)
+            .classed('content-area', true);
+
+		var bgRect = d3.select("svg").append("rect")
+			.attr("width", width)
+			.attr("height", height);
+
+		var linkSet = null,
+			nodeSet = null;
+
+		// Create data object sets
+		nodeSet = svg.selectAll(".node").data(nodesArray)
+			.enter().append("g")
+				.attr("class", "node")
+				.on('click', function() {
+					// Clear the pulse animation
+					clearInterval(pulseAnimationIntervalId);
+				});
+
+		// Draw outlines
+		nodeSet.append("circle")
+			.classed("outline pulse", true)
+			.attr("cx", function(d) { return d.x;})
+			.attr("cy", function(d) { return d.y;})
+			.attr("fill", "none")
+			.attr("stroke", pulseLineColor)
+			.attr("r", radius);
+
+		// Draw nodes on top of outlines
+		nodeSet.append("circle")
+			.attr("cx", function(d) { return d.x;})
+			.attr("cy", function(d) { return d.y;})
+			.attr("fill", "white")
+			.attr("stroke", outlineColor)
+			.attr("r", radius);
+
+		// Set pulse animation on interval
+		pulseAnimationIntervalId = setInterval(function() {
+			var times = 1,
+				distance = 600,
+				duration = 10000;
+			var outlines = svg.selectAll(".pulse");
+
+			// Function to handle one pulse animation
+			function repeat(iteration) {
+				if (iteration < times) {
+					outlines.transition()
+						.duration(duration)
+						.each("start", function() { d3.select(".outline").attr("r", radius).attr("stroke", pulseLineColor); })
+						.attrTween("r", function() { return d3.interpolate(radius, radius + distance); })
+						.styleTween("stroke", function() { return d3.interpolate(pulseLineColor, bgColor); })
+						.each("end", function() {repeat(iteration+1);});
+				}
+			}
+
+			if (!outlines.empty()) {
+				repeat(0);
+			}
+		}, 10000);
+    </script>
+</body>
+</html>

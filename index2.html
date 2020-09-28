@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<style>
+body{
+	background-color: rgb(38, 38, 38);
+	margin: 0px;
+}
+
+svg{
+	overflow: visible;
+}
+
+circle{
+	stroke-width: 5;
+}
+
+</style>
+
+<body></body>
+
+<script src="js/d3.js"></script>
+
+<script>
+
+var offset = 0,
+		width  = window.innerWidth,
+		height = window.innerHeight,
+		s = Math.sqrt(width*height/30)
+
+var svg = d3.select('body')
+	.append('svg')
+		.attr({height: height, width: width})
+
+
+function drawCircles(){
+	offset++
+
+	var circles = []
+	d3.range(0, width + s, s).forEach(function(x, i){
+		d3.range(0, height + s, s).forEach(function(y, j){
+			circles.push({
+				pos: [x, y], i: i, j: j,
+				num: Math.ceil(Math.random()*3)})
+		})
+	})
+
+	// circles = _.sortBy(circles, function(d){ return (d.i + d.j + offset) % 3 })
+
+	var gs = svg.append('g.circle-g').dataAppend(circles, 'g')
+
+	gs.append('circle')
+			.attr('r', 0)
+			.attr('fill', randColor())
+			.attr('stroke', randColor())
+		.transition().duration(2000)
+			.ease('linear')
+			.attr('r', s)
+			// .attr('fill', randColor())
+		.transition().duration(500)
+			.remove()
+			// .attr('stroke', randColor())
+
+
+
+	// var numCircles = d3.selectAll('.circle-g').size()
+	// d3.selectAll('.circle-g')
+	// 		.filter(function(d, i){ return i + 3 < numCircles })
+	// 		.remove()
+
+
+	setTimeout(drawCircles, 1000)
+}
+drawCircles()
+
+
+function randColor(){
+	return 'rgb(' + [Math.random()*255, Math.random()*255, Math.random()*255].map(Math.round) + ')'
+}
+
+</script>
